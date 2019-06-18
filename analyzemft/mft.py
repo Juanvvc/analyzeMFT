@@ -420,8 +420,13 @@ def mft_to_body(record, full, std):
             name = record['filename']
         else:
             name = record['fn', 0]['name']
+        
+        # mark this status in the filename
+        if 'si' not in record:
+            name = '%s (deleted)' % name
 
-        if std:  # Use STD_INFO
+        if std and 'si' in record:  # Use STD_INFO
+            # If a file is deleted, there might be a FILENAME record but not a STD_INFO record
             rec_bodyfile = ("%s|%s|%s|%s|%s|%s|%s|%d|%d|%d|%d\n" %
                             ('0', name, '0', '0', '0', '0',
                              int(record['fn', 0]['real_fsize']),

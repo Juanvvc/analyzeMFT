@@ -21,7 +21,7 @@ import analyzemft.mftutils as mftutils
 NO_FN_RECORD = b'NO_FN_RECORD'
 NO_SI_RECORD = b'NO_SI_RECORD'
 CORRUPT_RECORD = b'CORRUPT_RECORD'
-DELETED_SUFFIX = b' (DELETED)'
+DELETED_SUFFIX = b' (deleted)'
 
 def parse_record(raw_record, options):
     record = {
@@ -356,7 +356,7 @@ def mft_to_csv(record, ret_header, options):
         'propertyset',
         'loggedutility',
     ]:
-        csv_string.append('True') if record_str in record else csv_string.append('False')
+        csv_string.append('True: '+ record_str) if record_str in record else csv_string.append('False')
 
     if 'notes' in record:  # Log of abnormal activity related to this record
         csv_string.append(record['notes'])
@@ -392,7 +392,6 @@ def mft_to_csv(record, ret_header, options):
     return csv_string
 
 
-# MD5|name|inode|mode_as_string|UID|GID|size|atime|mtime|ctime|crtime
 def mft_to_json(record):
     json_object = {}
     
@@ -408,6 +407,7 @@ def mft_to_json(record):
         
     return json_object
 
+# MD5|name|inode|mode_as_string|UID|GID|size|atime|mtime|ctime|crtime
 def mft_to_body(record, full, std):
     """ Return a MFT record in bodyfile format"""
 
@@ -427,7 +427,7 @@ def mft_to_body(record, full, std):
         if std and 'si' in record:  # Use STD_INFO
             # If a file is deleted, there might be a FILENAME record but not a STD_INFO record
             rec_bodyfile = ("%s|%s|%s|%s|%s|%s|%s|%d|%d|%d|%d\n" %
-                            ('0', name.decode(), '0', '0', '0', '0',
+                            ('0', name.decode(), int(record['recordnum']), record['si']['own_id'], '0', '0',
                              int(record['fn', 0]['real_fsize']),
                              int(record['si']['atime'].unixtime),  # was str ....
                              int(record['si']['mtime'].unixtime),
@@ -435,7 +435,7 @@ def mft_to_body(record, full, std):
                              int(record['si']['crtime'].unixtime)))
         else:  # Use FN
             rec_bodyfile = ("%s|%s|%s|%s|%s|%s|%s|%d|%d|%d|%d\n" %
-                            ('0', name.decode(), '0', '0', '0', '0',
+                            ('0', name.decode(), int(record['recordnum']), '0', '0', '0',
                              int(record['fn', 0]['real_fsize']),
                              int(record['fn', 0]['atime'].unixtime),
                              int(record['fn', 0]['mtime'].unixtime),
@@ -445,7 +445,7 @@ def mft_to_body(record, full, std):
     else:
         if 'si' in record:
             rec_bodyfile = ("%s|%s|%s|%s|%s|%s|%s|%d|%d|%d|%d\n" %
-                            ('0', NO_FN_RECORD.decode(), '0', '0', '0', '0', '0',
+                            ('0', NO_FN_RECORD.decode(), int(record['recordnum']), record['si']['own_id'], '0', '0', '0',
                              int(record['si']['atime'].unixtime),  # was str ....
                              int(record['si']['mtime'].unixtime),
                              int(record['si']['ctime'].unixtime),

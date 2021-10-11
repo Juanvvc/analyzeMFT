@@ -5,6 +5,14 @@ Analyze MFT
 analyzeMFT.py is designed to fully parse the MFT file from an NTFS filesystem
 and present the results as accurately as possible in multiple formats.
 
+This project was started by David Kovar, but he stopped contributing after
+2020: https://github.com/dkovar/analyzeMFT
+
+This updated version:
+
+- Runs on Python3
+- Fixes many bugs and outputs additional dates
+
 Installation
 ===========
 You should now be able to install analyzeMFT with pip:
@@ -13,7 +21,7 @@ You should now be able to install analyzeMFT with pip:
     
 Alternatively:
 
-    git clone https://github.com/dkovar/analyzeMFT.git
+    git clone https://github.com/IncideDigital/analyzeMFT
     cd analyzeMFT
     python setup.py install (or, just run it from that directory)
 
@@ -79,6 +87,10 @@ You can turn off all the GUI dependencies by setting the noGUI flag to 'True'. T
 Update History
 =============
 [See CHANGES.txt]
+
+Version 3.0.0: Works in Python3 and includes many bugfixes
+
+------ Version 2 history follows. This was the last version by dkovar ------
 
 Version 2.0.4:Minor tweaks to support external programs
 Version 2.0.3:Restructured to support PyPi (pip)
